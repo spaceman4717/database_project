@@ -1,0 +1,11 @@
+init,5,4,2
+fix,2,read
+fix,3,read
+fix,4,write
+fix,5,read
+fix,6,write
+unfix,7,read
+fix,8,read
+fix,2,write
+fix,2,write
+unfix,2,write
