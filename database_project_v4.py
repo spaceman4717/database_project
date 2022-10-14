@@ -29,7 +29,7 @@ class Frame:
  
  
 
-def createPages():
+def createFrames():
     frames=[]
     for i in range(num_frames):
         frames.append(Frame(i))
@@ -61,7 +61,7 @@ def lru(pages):
 def lfu(frames,pageid_):
     pages_total_fix_count=float('-inf')
     lfu_frameid=0
-    for f in range(frames):
+    for f in range(len(frames)):
         temp=frames[f].fix_writes+frames[f].fix_reads
         if pages_total_fix_count<temp:
             pages_total_fix_count=temp
@@ -70,6 +70,7 @@ def lfu(frames,pageid_):
     
     frames[f].flush()#reintialize frame
     frames[f].pageid=pageid_#set frame to new page
+    frames[f].frameid=f
     return frames
 
 
@@ -91,7 +92,7 @@ def checkIfBufferFull(pages):
     return True
 #returns the index of the page searched for in the pages array
 def findPageIndex(frames,searchid):#return None if not found
-    for t in range(page_num):
+    for t in range(len(frames)):
         if frames[t].pageid==searchid:
             return t
     return None  #        
@@ -118,7 +119,7 @@ def getOutstandingR_W(frames):
     return number    
 
 if __name__=='__main__':
-    frames=createPages()
+    frames=createFrames()
     #for y in range(num_pages):
     #    print (pages[y].pageid)
     file_obj=open("buffer_info.txt","r")
@@ -167,10 +168,11 @@ if __name__=='__main__':
 
 
         frameid=findPageIndex(frames,page_id)#find frameid of page in buffer
-        if frameid==None:#existing frame with that id is not found
+        if frameid==None :#existing frame with that pageid is not found
             total_hit_attempt+=1
-            frameid_increment+=1
+            
             current_frame=frames[frameid_increment]
+            frameid_increment+=1
             #continue#skip to next loop iteration -----no if frame not found create it
         else:
             total_hit_attempt+=1
@@ -180,10 +182,8 @@ if __name__=='__main__':
 
         
         
-        hit_rate=100*number_of_hits/total_hit_attempt        
-
-        
-        current_frame.frame_in_use=True
+        hit_rate=100*number_of_hits/total_hit_attempt                
+        current_frame.is_frame_in_use=True
         current_frame.pageid=page_id
     
         if current_frame.dirty:#check if page dirty before it is written to
